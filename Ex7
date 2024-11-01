@@ -1,0 +1,7 @@
+n = int(input())
+N = list(map(int, input().split()))
+last = N[-1]
+for i in range(n - 1, 0, -1):
+    N[i] = N[i - 1]
+N[0] = last
+print(*N)
