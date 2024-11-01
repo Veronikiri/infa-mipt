@@ -1,0 +1,7 @@
+n = int(input())
+N = list(map(int, input().split()))
+maxn = N[0]
+for i in N:
+    if i > maxn:
+        maxn=i
+print(maxn)
