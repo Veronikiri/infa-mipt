@@ -1,0 +1,8 @@
+n = int(input())
+N = list(map(int, input().split()))
+x = int(input())
+count = 0
+for i in N:
+    if i == x:
+        count += 1
+print(count)
