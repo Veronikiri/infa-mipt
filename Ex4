@@ -1,0 +1,10 @@
+x_queen =int(input())
+y_queen = int(input())
+x_fig =int(input())
+y_fig = int(input())
+if x_queen == x_fig or y_queen == y_fig:
+    print("YES")
+elif abs(x_queen - x_fig) == abs(y_queen - y_fig):
+    print("YES")
+else:
+    print("NO")
