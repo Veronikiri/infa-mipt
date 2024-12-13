@@ -1,0 +1,75 @@
+import time
+import matplotlib.pyplot as plt
+import numpy as np
+
+def bubble_sort(arr):
+    n = len(arr)
+    for j in range(n - 1):
+        for i in range(len(arr) - 1 - j):
+            if arr[i] > arr[i + 1]:
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
+    return arr
+
+def selection_sort(arr):
+    n = len(arr)
+    for j in range(n - 1):
+        def find_max(N):
+            res = 0
+            for i in range(1, len(N)):
+                if N[i] >= N[res]:
+                    res = i
+            return res
+        arr[find_max(arr)], arr[-1 - j] = arr[-1 - j], arr[find_max(arr)]
+    return arr
+
+def insertion_sort(arr):
+    n = len(arr)
+    for i in range(1, n):
+        j = i
+        while j > 0 and arr[j - 1] > arr[j]:
+            arr[j], arr[j - 1] = arr[j - 1], arr[j]
+            j -= 1
+    return arr
+
+sizes = []
+times_bubble = []
+times_selection = []
+times_insertion = []
+num_repetitions = 100
+
+for i in range(1, 1000, 100):
+    total_time_bubble = 0
+    total_time_selection = 0
+    total_time_insertion = 0
+    for _ in range(num_repetitions):
+        N = list(np.random.randint(1, 1000, size=i))
+        start_time = time.time()
+        bubble_sort(N.copy())
+        end_time = time.time()
+        total_time_bubble += end_time - start_time
+
+        start_time = time.time()
+        selection_sort(N.copy())
+        end_time = time.time()
+        total_time_selection += end_time - start_time
+
+        start_time = time.time()
+        insertion_sort(N.copy())
+        end_time = time.time()
+        total_time_insertion += end_time - start_time
+
+    sizes.append(i)
+    times_bubble.append(total_time_bubble / num_repetitions)
+    times_selection.append(total_time_selection / num_repetitions)
+    times_insertion.append(total_time_insertion / num_repetitions)
+
+plt.plot(sizes, times_bubble, label="Bubble Sort")
+plt.plot(sizes, times_selection, label="Selection Sort")
+plt.plot(sizes, times_insertion, label="Insertion Sort")
+
+plt.xlabel("Размер массива")
+plt.ylabel("Время сортировки (сек)")
+plt.title("Зависимость времени сортировки от размера массива")
+plt.legend()
+plt.grid(True)
+plt.show() 
