@@ -1,0 +1,116 @@
+Упражение 1
+Написать функцию, считающую N-ое число Фибоначчи (N вводится с клавиатуры).
+
+def fibonacci(n):
+    if n <= 2:
+        return 1
+    else:
+        a, b = 1, 1
+        for _ in range(3, n + 1):
+            a, b = b, a + b
+        return b
+n = int(input())
+result = fibonacci(n)
+print(result)
+
+
+Упражение 2
+Написать функцию, раскладывающую число на простые множители (число вводится с клавиатуры).
+
+def numbers(n):
+    num = []
+    while n % 2 == 0:
+        num.append(2)
+        n //= 2
+    for i in range(3, int(n**0.5) + 1, 2):
+        while n % i == 0:
+            num.append(i)
+            n //= i
+    if n > 2:
+        num.append(n)
+    return num
+number = int(input())
+result = numbers(number)
+print(result)
+
+
+Упражнение 3
+Со времен Евклида известно, что для любых положительных a и b существуют такие целые x и y, что ax + by = d, где d – наибольший общий делитель a и b. По заданным a и b найти x, y, d.
+Вход. Каждая строка содержит два натуральных числа a и b, разделенных пробелом.
+Выход. Для каждой пары a и b в отдельной строке вывести три целых числа x, y и d, разделенных пробелом. Если искомых значений x и y несколько, то следует выводить такую пару, для которой |x| + |y| минимально. Если и таких пар несколько, то вывести ту пару, в которой x минимально.
+
+def extended_gcd(a, b):
+    if a == 0:
+        return b, 0, 1
+    else:
+        gcd, x1, y1 = extended_gcd(b % a, a)
+        x = y1 - (b // a) * x1
+        y = x1
+        return gcd, x, y
+input_data = input().split()
+a = int(input_data[0])
+b = int(input_data[1])
+gcd, x, y = extended_gcd(a, b)
+print(f"{x} {y} {gcd}")
+
+
+
+Упражнение 4
+Напишите функцию для вывода треугольника. Функция принимает два аргумента – size (количество строк, на которых будет строиться треугольник) и symb (символ, используемый для заполнения треугольника).
+
+def print_triangle(size, symb):
+    for i in range(1, size//2 + 2):
+        print(symb * i)
+    for i in range(size//2, 0, -1):
+        print(symb * i)
+print_triangle(7, 'C')
+
+
+Упражнение 5
+
+def create_spiral_matrix(n, m):
+    matrix = [[0] * m for _ in range(n)]
+    x, y = 0, 0
+    dx, dy = 0, 1
+    for i in range(1, n * m + 1):
+        matrix[x][y] = i
+        nx, ny = x + dx, y + dy
+        if not (0 <= nx < n and 0 <= ny < m and matrix[nx][ny] == 0):
+            dx, dy = dy, -dx
+            nx, ny = x + dx, y + dy
+        x, y = nx, ny
+    return matrix
+def multiply_rows(matrix):
+    for i in range(len(matrix)):
+        matrix[i] = [x * i for x in matrix[i]]
+    return matrix
+def print_matrix(matrix):
+    for row in matrix:
+        print(' '.join(map(str, row)))
+N = 5
+M = 6
+spiral_matrix = create_spiral_matrix(N, M)
+print("Исходная спиральная матрица:")
+print_matrix(spiral_matrix)
+result_matrix = multiply_rows(spiral_matrix)
+print("\nМатрица после умножения строк на их номера:")
+print_matrix(result_matrix)
+
+
+Упражнение 6
+Напишите функцию, считающую коэффициенты МНК для набора измерений x и y.
+
+def cal_coef(x, y):
+    n = len(x)
+    sum_x = sum(x)
+    sum_y = sum(y)
+    sum_xy = sum(xi * yi for xi, yi in zip(x, y))
+    sum_x2 = sum(xi**2 for xi in x)
+    a = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x**2)
+    b = (sum_y - a * sum_x) / n
+    return a, b
+x = [1, 2, 3, 4, 5]
+y = [2, 3, 5, 7, 11]
+a, b = cal_coef(x, y)
+print(a)
+print(b)
