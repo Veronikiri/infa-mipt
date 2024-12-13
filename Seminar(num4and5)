@@ -1,0 +1,52 @@
+Упражнение 4 (Подгониан)
+Постройте из файла iris_data все возможные комбинации длин и ширин лепестков и чашелистников (Petal и Sepal). У вас должно получиться 6 графиков (SepalLengthCm от SepalWidthCm, SepalLengthCm от PetalLengthCm и так далее) Можно ли заметить какие-либо закономерности? Если да, попробуйте построить прямую МНК и вывести на экран ее коэффициенты.
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+data = pd.read_csv('iris_data.csv')
+combinations = [
+    ('SepalLengthCm', 'SepalWidthCm'),
+    ('SepalLengthCm', 'PetalLengthCm'),
+    ('SepalLengthCm', 'PetalWidthCm'),
+    ('SepalWidthCm', 'PetalLengthCm'),
+    ('SepalWidthCm', 'PetalWidthCm'),
+    ('PetalLengthCm', 'PetalWidthCm')
+]
+def plot_and_fit(x_col, y_col):
+    x = data[x_col]
+    y = data[y_col]
+    plt.scatter(x, y, label=f'{x_col} vs {y_col}')
+    plt.xlabel(x_col)
+    plt.ylabel(y_col)
+    plt.title(f'{x_col} vs {y_col}')
+    coefficients = np.polyfit(x, y, 1)
+    polynomial = np.poly1d(coefficients)
+    ys = polynomial(x)
+    plt.plot(x, ys, color='red', label=f'Fit: {coefficients[0]:.2f}x + {coefficients[1]:.2f}')
+    plt.legend()
+    plt.show()
+    print(f'Коэффициенты для {x_col} vs {y_col}: y = {coefficients[0]:.2f}x + {coefficients[1]:.2f}')
+for x_col, y_col in combinations:
+    plot_and_fit(x_col, y_col)
+
+
+
+Упражнение 5 (Ты родился слишком поздно, чтобы ...)
+В файле BTC_data.csv лежат ежедневные значения цены биткоина на бирже с 2018 по 2023 год. Не будем вдаваться в подробности, чем отличаются четыре указанные цены, нас интересует только последнее число в каждой строке -- цена закрытия close и дата, первое значение в каждой строке. Постройте исторический график зависимости цены биткоина от времени. В качестве зарубок по оси X используйте даты в формате DD-MM-YY (например 06-03-2005 -- означает 6 марта 2005 года).
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+data = pd.read_csv('BTC_data.csv')
+data['Date'] = pd.to_datetime(data['Date'], format='%d-%m-%Y')
+plt.figure(figsize=(14, 7))
+plt.plot(data['Date'], data['Close'], label='Цена закрытия')
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%m-%Y'))
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator(interval=6))
+plt.gcf().autofmt_xdate()
+plt.title('Исторический график цены биткоина')
+plt.xlabel('Дата')
+plt.ylabel('Цена закрытия (USD)')
+plt.legend()
+plt.show()
