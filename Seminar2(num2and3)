@@ -1,0 +1,68 @@
+Упражнение 2. Групповое обращение
+
+Рассмотрим операцию группового обращения строки. Строка разбивается на N групп символов равной длины, после чего в каждой группе порядок символов меняется на обратный. Зная количество групп в строке, необходимо найти ее обращение.
+Вход. Количество групп G в строке и сама строка. Длина строки кратна G. Строка может содержать только буквы и цифры.
+Выход. Вывести групповое обращение строки.
+Пример входа 	Пример выхода
+3 ABCEHSHSH 	CBASHEHSH
+6 AB0TAEL0ANANAB0EVO0SANAN 	EAT0BANANA0LOVE0BANANAS0
+
+G, s = map(int, input().split())
+def group_reverse(G, s):
+    group_length = len(s) // G
+    groups = [s[i:i + group_length] for i in range(0, len(s), group_length)]
+    reversed_groups = [group[::-1] for group in groups]
+    result = ''.join(reversed_groups)
+    return result
+if len(s) % G != 0:
+    print('error')
+else:
+    result = group_reverse(G, s)
+    print(result)
+
+
+Упражнение 3. Зеркальный палиндром
+
+Обыкновенный палиндром – это строка символов, которая одинаково читается как слева направо, так и справа налево.
+Строка называется зеркальной, если после замены всех ее символов на зеркальные отображения, она будет читаться с конца так же, как и исходная строка. Зеркальные буквы поданы в таблице ниже. Например, строка "3AIAE" является зеркальной. Если строка содержит букву, которая не имеет зеркального отображения, то такая строка не может быть зеркальной.
+Символы 	Зеркальный вариант
+A, H, I, M, O, T, U, V, W, X, Y, 1, 8 	сами в себя
+E, J, S, Z                            	3, L, 2, 5
+Зеркальный палиндром – это строка символов, которая одновременно является обыкновенным палиндромом и зеркальной строкой. Например, строка "ATOYOTA" является зеркальным палиндромом.
+На вход принимается строка, состоящая из заглавных символов и цифр. Необходимо вывести одно из следующих сообщений:
+Пример входа 	Пример выхода
+ABC 	"ABC is not a palindrome."
+ABA 	"ABA is a regular palindrome."
+EA3 	"EA3 is a mirrored string."
+AMA 	"AMA is a mirrored palindrome."
+
+input_string = input()
+def is_palindrome(s):
+    return s == s[::-1]
+def is_mirrored(s):
+    mirrored_chars = {
+        'A': 'A', 'H': 'H', 'I': 'I', 'M': 'M', 'O': 'O', 'T': 'T', 'U': 'U', 'V': 'V', 'W': 'W', 'X': 'X', 'Y': 'Y', '1': '1', '8': '8',
+        'E': '3', 'J': 'L', 'S': '2', 'Z': '5',
+        '3': 'E', 'L': 'J', '2': 'S', '5': 'Z'
+    }
+    mirrored_string = ''.join(mirrored_chars.get(char, '') for char in s[::-1])
+    return mirrored_string == s
+def check_mirrored_palindrome(s):
+    mirrored_chars = {
+        'A': 'A', 'H': 'H', 'I': 'I', 'M': 'M', 'O': 'O', 'T': 'T', 'U': 'U', 'V': 'V', 'W': 'W', 'X': 'X', 'Y': 'Y', '1': '1', '8': '8',
+        'E': '3', 'J': 'L', 'S': '2', 'Z': '5',
+        '3': 'E', 'L': 'J', '2': 'S', '5': 'Z'
+    }
+    if is_palindrome(s):
+        if is_mirrored(s):
+            return f"{s} is a mirrored palindrome."
+        else:
+            return f"{s} is a regular palindrome."
+    elif is_mirrored(s):
+        return f"{s} is a mirrored string."
+    else:
+        return f"{s} is not a palindrome."
+result = check_mirrored_palindrome(input_string)
+print(result)
+
+
