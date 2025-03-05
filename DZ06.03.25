@@ -1,0 +1,113 @@
+# N, M = map(int, input().split())
+# edges = []
+# for _ in range(M):
+#     x, y = map(int, input().split())
+#     edges.append((x, y))
+# for edge in edges:
+#     print(edge)
+
+
+# N, M = map(int, input().split())
+# edges = []
+# for _ in range(M):
+#     x, y = map(int, input().split())
+#     edges.append((x, y))
+# def adj_m(N, edges):
+#     matrix = [[0]*N for _ in range(N)]
+#     for i, j in edges:
+#         matrix[i][j] = 1 
+#     return matrix
+# adj_m = adj_m(N, edges)
+# for line in adj_m:
+#     print(line)
+
+
+# N, M = map(int, input().split())
+# edges = []
+# for _ in range(M):
+#     x, y = map(int, input().split())
+#     edges.append((x, y))
+# def adj_m(N, edges):
+#     matrix = [[0]*N for _ in range(N)]
+#     for i, j in edges:
+#         matrix[i][j] = 1 
+#     return matrix
+# adj_m = adj_m(N, edges)
+# adi_m = [[0]*N for _ in range(N)]
+# for i in range(N):
+#     for j in range(N):
+#         adi_m[j][i] = adj_m[i][j]
+# for line in adi_m:
+#     print(line)
+
+
+# N, M = map(int, input().split())
+# edges = []
+# for _ in range(M):
+#     x, y = map(int, input().split())
+#     edges.append((x, y))
+# def count_comp(N, edges):
+#     adj_list = [[] for _ in range(N)]
+#     for i, j in edges:
+#         adj_list[i].append(j)
+#         adj_list[j].append(i)
+#     visited = [False]*N
+#     comp_count = 0
+#     for node in range(N):
+#         if not visited[node]:
+#             queue = [node]
+#             visited[node] = True
+#             while queue:
+#                 current = queue.pop(0)
+#                 for neighbor in adj_list[current]:
+#                     if not visited[neighbor]:
+#                         visited[neighbor] = True
+#                         queue.append(neighbor)
+#             comp_count += 1
+#     return comp_count
+# comp = count_comp(N, edges)
+# print(comp)
+
+
+# N = int(input())
+# graph = []
+# for i in range(N):
+#     near = list(map(int, input().split()))
+#     graph.append(near)
+# def DFS(graph, node, visited):
+#     print(node)
+#     visited[node] = True
+#     for near in graph[node]:
+#         if not visited[near]:
+#             DFS(graph, near, visited)
+#     print(node)
+# visited = [False]*N
+# DFS(graph, 0, visited)
+
+N = int(input())
+M = int(input())
+edges = []
+for _ in range(M):
+    i, j, weight = map(int, input().split())
+    edges.append((i, j, weight))
+def FB(N, edges, start):
+    dist = [float('inf')]*N
+    dist[start] = 0
+    for _ in range(N - 1):
+        for i, j, weight in edges:
+            if dist[i] + weight < dist[j]:
+                dist[j] = dist[i] + weight
+    for i, j, weight in edges:
+        if dist[i] + weight < dist[j]:
+            print("Бесконечность - не предел!")
+            return None
+    return dist
+dist_m = []
+for start in range(N):
+    distances = FB(N, edges, start)
+    if distances is None:
+        break
+    dist_m.append(distances)
+if dist_m:
+    for line in dist_m:
+        print(line)
