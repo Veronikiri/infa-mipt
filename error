@@ -1,39 +1,79 @@
-Python 3.7.3 (default, Jan 22 2021, 20:04:44) 
-[GCC 8.3.0] on linux
-Type "help", "copyright", "credits" or "license" for more information.
->>> for pin in leds + dac + [troyka]: GPIO.setup(pin, GPIO.OUT)
-... /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-  File "<stdin>", line 2
-    /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-    ^
-SyntaxError: invalid syntax
->>> /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-  File "<stdin>", line 1
-    /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-    ^
-SyntaxError: invalid syntax
->>> /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-  File "<stdin>", line 1
-    /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-    ^
-SyntaxError: invalid syntax
->>> /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-  File "<stdin>", line 1
-    /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-    ^
-SyntaxError: invalid syntax
->>> /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-  File "<stdin>", line 1
-    /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-    ^
-SyntaxError: invalid syntax
->>> /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-  File "<stdin>", line 1
-    /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-    ^
-SyntaxError: invalid syntax
->>> /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-  File "<stdin>", line 1
-    /bin/python3 /home/b04-406/b04-407/7-1-measure.py
-    ^
-SyntaxError: invalid syntax
+import RPi.GPIO as GPIO
+import time
+import matplotlib.pyplot as plt
+
+DAC = [26, 19, 13, 6, 5, 11, 9, 10]
+LED = [21, 20, 16, 12, 7, 8, 25, 24]
+COMP = 4
+TROYKA = 17
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(DAC, GPIO.OUT)
+GPIO.setup(LED, GPIO.OUT)
+GPIO.setup(COMP, GPIO.IN)
+GPIO.setup(TROYKA, GPIO.OUT)
+
+def decimal2binary(value):
+    return [int(bit) for bit in bin(value)[2:].zfill(8)]
+
+def adc():
+    value = 0
+    for i in range(8):
+        value += 2**(7-i)
+        GPIO.output(DAC, decimal2binary(value))
+        time.sleep(0.001)
+        if GPIO.input(COMP) == 0:
+            value -= 2**(7-i)
+    return value
+
+try:
+    measurements = []
+    start_time = time.time()
+
+    GPIO.output(TROYKA, 1)
+    while True:
+        value = adc()
+        measurements.append(value)
+        voltage = value / 256 * 3.3
+        if voltage >= 3.3 * 0.97:
+            break
+
+    GPIO.output(TROYKA, 0)
+    while True:
+        value = adc()
+        measurements.append(value)
+        voltage = value / 256 * 3.3
+        if voltage <= 3.3 * 0.02:
+            break
+
+    end_time = time.time()
+    experiment_duration = end_time - start_time
+    sampling_period = experiment_duration / len(measurements)
+    sampling_frequency = 1 / sampling_period
+    adc_step = 3.3 / 256
+
+    plt.plot(measurements)
+    plt.xlabel('Номер измерения')
+    plt.ylabel('Показания АЦП')
+    plt.title('Зависимость показаний АЦП от номера измерения')
+    plt.grid(True)
+    plt.show()
+
+    with open('data.txt', 'w') as f:
+        for value in measurements:
+            f.write(f"{value}\n")
+
+    with open('settings.txt', 'w') as f:
+        f.write(f"Средняя частота дискретизации: {sampling_frequency:.2f} Гц\n")
+        f.write(f"Шаг квантования АЦП: {adc_step:.2f} В\n")
+
+    print(f"Общая продолжительность эксперимента: {experiment_duration:.2f} с")
+    print(f"Период одного измерения: {sampling_period:.2f} с")
+    print(f"Средняя частота дискретизации: {sampling_frequency:.2f} Гц")
+    print(f"Шаг квантования АЦП: {adc_step:.2f} В")
+
+finally:
+    GPIO.output(DAC, 0)
+    GPIO.output(LED, 0)
+    GPIO.output(TROYKA, 0)
+    GPIO.cleanup()
